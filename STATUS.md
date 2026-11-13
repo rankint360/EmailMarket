@@ -33,3 +33,7 @@ Implemented tenant-scoped transactional intake, DNS ownership challenges, revoca
 ## Phase 4 marketing milestone
 
 Implemented plain-text templates and preview, campaign drafts, list/tag audiences, eligibility validation, scheduling, cancellation and delivery analytics. Scheduled messages use the delivery outbox and retain a snapshot of content and recipients. Dispatch checks eligibility again. See [marketing setup and tests](platform/MARKETING.md). Phase 5 growth features await authorization.
+
+## Phase 0 discovery closeout
+
+Reviewed the original Part 24 brief and expanded discovery with the full named competitor roster, public review evidence, personas, MVP acceptance criteria, architecture decisions, design direction, operating gates and a registry-checked brand shortlist. The [Phase 0 index](docs/discovery/README.md) links the package and records evidence that requires external participation or launch access. Existing implementation milestones remain recorded above.

@@ -100,3 +100,5 @@ See [RISK-REGISTER.md](RISK-REGISTER.md). Sponsor review is required for market,
 5. Workspace shell (2–4 days, frontend, after 3). Connect real workspace data and membership views. Test role visibility, keyboard navigation and responsive layout. Document UI conventions.
 6. Foundation acceptance (1–3 days, QA, after 4–5). Run clean-install, integration, E2E and backup/restore smoke checks. Publish results, limitations and release notes, then push the milestone and await Phase 2 approval.
 
+
+For the expanded Phase 0 evidence and specification, see the [Phase 0 discovery index](docs/discovery/README.md).

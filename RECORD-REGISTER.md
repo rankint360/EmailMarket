@@ -21,3 +21,5 @@ Add one entry for each decision, research finding, build, test run, publication 
 - REC-013 — Phase 3 delivery implementation and local integration verification. Live delivery activation remains infrastructure-dependent.
 
 - REC-014 — Phase 4 marketing implementation and campaign integration verification. Live sends depend on Phase 3 operational activation.
+
+- REC-015 — 2026-11-13 Phase 0 discovery closeout. Added public-source comparison of 18 vendors, product definition, technical specification and Verisign .com checks. Customer interviews, vendor trials and provider approvals remain open.
