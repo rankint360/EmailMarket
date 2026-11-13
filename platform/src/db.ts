@@ -22,7 +22,7 @@ export async function openDatabase(url?: string, directory?: string) {
         await exec(
           "CREATE TABLE IF NOT EXISTS schema_migrations (version integer PRIMARY KEY)",
         );
-        for (const version of [1, 2, 3]) {
+        for (const version of [1, 2, 3, 4]) {
           if (
             (
               await sql(

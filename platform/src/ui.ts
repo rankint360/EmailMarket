@@ -1,3 +1,4 @@
+import { marketingPanel, marketingScript } from "./marketing-ui.js";
 import { contactsPanel, contactsScript } from "./contacts-ui.js";
 export const page = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -13,7 +14,7 @@ export const page = `<!doctype html>
 <section id="management" hidden><h2 id="selected"></h2><h3>Members</h3><ul id="members"></ul>
 <form id="member-form" hidden><label>Existing account email<input name="email" type="email" required></label>
 <label>Role<select name="role"><option>viewer</option><option>marketer</option><option>developer</option><option>admin</option></select></label>
-<button>Save member</button></form><h3>Audit history</h3><ul id="audit"></ul></section>${contactsPanel}</main></body></html>`;
+<button>Save member</button></form><h3>Audit history</h3><ul id="audit"></ul></section>${contactsPanel}${marketingPanel}</main></body></html>`;
 
 export const assets = {
   css: `
@@ -28,13 +29,14 @@ h2 { margin-top:0; }
 section { margin:1rem 0; background:#fff; border:1px solid var(--line); border-radius:1rem; padding:clamp(1rem, 4vw, 2rem); }
 form { display:grid; gap:1rem; max-width:30rem; }
 label { display:grid; gap:.4rem; font-weight:650; }
-input, select, button { font:inherit; min-height:2.65rem; border:1px solid var(--line); border-radius:.45rem; padding:.55rem .75rem; }
+input, select, textarea, button { font:inherit; min-height:2.65rem; border:1px solid var(--line); border-radius:.45rem; padding:.55rem .75rem; }
 button { width:fit-content; cursor:pointer; background:var(--accent); color:white; font-weight:650; }
 button.secondary { color:var(--accent); background:white; }
 :focus-visible { outline:3px solid #c4630b; outline-offset:3px; }
 .actions { display:flex; flex-wrap:wrap; gap:.5rem; }
 li { margin-block:.6rem; overflow-wrap:anywhere; }
 li button { margin-inline-start:.5rem; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 #status { color:var(--muted); min-height:1.25rem; }`,
   js: `
 const get = id => document.getElementById(id);
@@ -94,6 +96,7 @@ async function refresh() {
     for (const workspace of workspaces) {
       const row = item(list, workspace.name + ' · ' + workspace.role);
       if (['owner','admin','marketer','viewer'].includes(workspace.role)) action(row, 'Contacts', () => openAudience(workspace));
+      if (['owner','admin','marketer','viewer'].includes(workspace.role)) action(row, 'Campaigns', () => openMarketing(workspace));
       if (['owner', 'admin'].includes(workspace.role)) action(row, 'Manage', () => select(workspace));
     }
     if (!workspaces.length) item(list, 'Create your first workspace below.');
@@ -101,7 +104,7 @@ async function refresh() {
     if (error.status !== 401) throw error;
     get('identity').hidden = false;
     get('workspace').hidden = get('management').hidden = get('logout').hidden = true;
-    active = undefined; hideAudience();
+    active = undefined; hideAudience(); hideMarketing();
   }
 }
 function form(id, handler) {
@@ -134,5 +137,6 @@ form('member-form', async values => {
 });
 get('logout').addEventListener('click', () => perform(async () => { await api('logout', 'POST'); await refresh(); }));
 ${contactsScript}
+${marketingScript}
 void perform(refresh);`,
 };

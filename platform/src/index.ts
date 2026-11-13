@@ -18,6 +18,11 @@ if (operatorKey && operatorKey.length < 32)
 const feedbackKey = process.env.FEEDBACK_KEY;
 if (feedbackKey && feedbackKey.length < 32)
   throw new Error("FEEDBACK_KEY must be at least 32 characters");
+const publicOrigin = process.env.PUBLIC_ORIGIN;
+if (publicOrigin && new URL(publicOrigin).origin !== publicOrigin)
+  throw new Error("PUBLIC_ORIGIN must be an origin");
+if (publicOrigin && new URL(publicOrigin).protocol !== "https:")
+  throw new Error("PUBLIC_ORIGIN must use HTTPS");
 const db = await openDatabase(url, process.env.LOCAL_DB ?? "./local-data");
 
 try {
@@ -37,6 +42,7 @@ try {
       logger: true,
       operatorKey,
       feedbackKey,
+      publicOrigin,
     });
     app.addHook("onClose", () => db.close());
     for (const signal of ["SIGINT", "SIGTERM"] as const) {

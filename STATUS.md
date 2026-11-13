@@ -1,6 +1,6 @@
 # Project status
 
-**Milestone** — Part 15 Phase 3 email infrastructure.
+**Milestone** — Part 15 Phase 4 marketing product.
 **Date** — 2026-11-13.
 
 1. Published the Part 24 discovery package and risk register in Phase 0.
@@ -28,3 +28,8 @@ See the [Phase 2 guide](platform/CONTACTS.md).
 
 Implemented tenant-scoped transactional intake, DNS ownership challenges, revocable credentials, durable outbox, adapter worker, Postfix integration and normalized feedback. Local integration tests exercised idempotency, dispatch and complaint suppression. Live services require provisioned SMTP, DNS and gateway configuration. See [delivery setup](platform/DELIVERY.md).
 
+
+
+## Phase 4 marketing milestone
+
+Implemented plain-text templates and preview, campaign drafts, list/tag audiences, eligibility validation, scheduling, cancellation and delivery analytics. Scheduled messages use the delivery outbox and retain a snapshot of content and recipients. Dispatch checks eligibility again. See [marketing setup and tests](platform/MARKETING.md). Phase 5 growth features await authorization.

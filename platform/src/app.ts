@@ -1,3 +1,4 @@
+import { registerMarketing } from "./marketing.js";
 import { registerDelivery } from "./delivery.js";
 import { registerContacts } from "./contacts.js";
 import Fastify from "fastify";
@@ -35,6 +36,7 @@ export function buildApp(
     logger?: boolean;
     operatorKey?: string;
     feedbackKey?: string;
+    publicOrigin?: string;
   } = {},
 ) {
   const app = Fastify({
@@ -361,5 +363,6 @@ export function buildApp(
   );
   registerContacts(app, db, scope);
   registerDelivery(app, db, scope, options.feedbackKey);
+  registerMarketing(app, scope, options.publicOrigin);
   return app;
 }

@@ -19,3 +19,5 @@ Add one entry for each decision, research finding, build, test run, publication 
 
 
 - REC-013 — Phase 3 delivery implementation and local integration verification. Live delivery activation remains infrastructure-dependent.
+
+- REC-014 — Phase 4 marketing implementation and campaign integration verification. Live sends depend on Phase 3 operational activation.
