@@ -41,3 +41,7 @@ Reviewed the original Part 24 brief and expanded discovery with the full named c
 ## Phase 5 growth milestone
 
 Implemented hosted forms, form-to-group automation, consent segments, signed outbound event delivery, integration credentials and monthly usage and billing estimates. See [growth API and operations](platform/GROWTH.md).
+
+## Phase 6 beta readiness milestone
+
+Added explicit workspace activation and pause, scoped support intake and operator queue visibility, and concurrent-request smoke coverage. The [beta readiness guide](platform/BETA.md) records open production gates. Live deliverability, independent security audit, staging load, beta cohort and pricing validation remain pending.

@@ -198,6 +198,16 @@ export async function recordEvent(
 export async function dispatchOne(db: Database, w: string, adapter: Adapter) {
   const job = await db.run(
     async (sql) => {
+      await sql("SELECT pg_advisory_xact_lock(hashtextextended($1,1))", [w]);
+      const [control] = await sql<{ paused: boolean }>(
+        "SELECT paused FROM beta_controls WHERE workspace_id=$1",
+        [w],
+      );
+      if (
+        control?.paused ||
+        (process.env.NODE_ENV === "production" && !control)
+      )
+        return;
       await sql(
         "UPDATE messages SET status='uncertain' FROM delivery_outbox o WHERE messages.workspace_id=$1 AND messages.id=o.message_id AND o.workspace_id=$1 AND messages.status='submitting' AND o.claimed_at<now()-interval '2 minutes'",
         [w],

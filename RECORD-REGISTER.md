@@ -25,3 +25,5 @@ Add one entry for each decision, research finding, build, test run, publication 
 - REC-015 — 2026-11-13 Phase 0 discovery closeout. Added public-source comparison of 18 vendors, product definition, technical specification and Verisign .com checks. Customer interviews, vendor trials and provider approvals remain open.
 
 - REC-016 — Phase 5 growth functionality, tests and documentation.
+
+- REC-017 — Phase 6 beta controls, support and smoke verification. Commercial launch gates remain open.
