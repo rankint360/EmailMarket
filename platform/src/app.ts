@@ -1,3 +1,4 @@
+import { registerContacts } from "./contacts.js";
 import Fastify from "fastify";
 import type { FastifyRequest } from "fastify";
 import { randomUUID } from "node:crypto";
@@ -30,7 +31,11 @@ export function buildApp(
   db: Database,
   options: { secure?: boolean; logger?: boolean; operatorKey?: string } = {},
 ) {
-  const app = Fastify({ logger: options.logger, bodyLimit: 8192 });
+  const app = Fastify({
+    logger: options.logger,
+    bodyLimit: 8192,
+    logController: new Fastify.LogController({ disableRequestLogging: true }),
+  });
   const responses = new Map<number, number>();
   const attempts = new Map<string, { count: number; until: number }>();
   const cookie = (token: string, age: number) =>
@@ -117,6 +122,7 @@ export function buildApp(
       "referrer-policy": "no-referrer",
     });
     if (
+      req.routeOptions.url !== "/unsubscribe/:workspace/:token" &&
       req.method !== "GET" &&
       req.method !== "HEAD" &&
       (req.headers["sec-fetch-site"] === "cross-site" ||
@@ -126,6 +132,14 @@ export function buildApp(
     }
   });
   app.addHook("onResponse", async (req, reply) => {
+    req.log.info(
+      {
+        method: req.method,
+        route: req.routeOptions.url,
+        statusCode: reply.statusCode,
+      },
+      "request completed",
+    );
     if (req.url !== "/metrics")
       responses.set(
         reply.statusCode,
@@ -155,7 +169,7 @@ export function buildApp(
   app.get("/health/live", async () => ({ status: "ok" }));
   app.get("/health/ready", async (_, reply) => {
     try {
-      await db.run((sql) => sql("SELECT 1 FROM accounts LIMIT 1"));
+      await db.run((sql) => sql("SELECT 1 FROM contact_preferences LIMIT 1"));
     } catch {
       return reply.code(503).send({ status: "unavailable" });
     }
@@ -189,7 +203,7 @@ export function buildApp(
   app.get("/internal/v1/status", async (req) => {
     operator(req);
     req.log.info({ operation: "operator_status" }, "operator access");
-    await db.run((sql) => sql("SELECT 1 FROM accounts LIMIT 1"));
+    await db.run((sql) => sql("SELECT 1 FROM contact_preferences LIMIT 1"));
     return { database: "ready", uptimeSeconds: Math.floor(process.uptime()) };
   });
 
@@ -339,5 +353,6 @@ export function buildApp(
       ),
     ),
   );
+  registerContacts(app, db, scope);
   return app;
 }

@@ -38,5 +38,9 @@ Signup and login accept JSON email and password. Create workspace accepts name. 
 
 ## Release limitations
 
-Foundation uses local password authentication and direct assignment of existing accounts. Verified identity, recovery, invitations, customer-facing MFA and managed identity integration are release follow-ups. The operator endpoint is a read-only status surface with a separate credential. A named operator identity, MFA gateway and administrative UI require deployment work. The built-in rate limiter is single-process; use upstream controls for deployments. Provision infrastructure and an approved deployment target before turning the container build into a release deployment. Contacts, sending and billing are later phases.
+Foundation uses local password authentication and direct assignment of existing accounts. Verified identity, recovery, invitations, customer-facing MFA and managed identity integration are release follow-ups. The operator endpoint is a read-only status surface with a separate credential. A named operator identity, MFA gateway and administrative UI require deployment work. The built-in rate limiter is single-process; use upstream controls for deployments. Provision infrastructure and an approved deployment target before turning the container build into a release deployment. Sending and billing are later phases.
+
+
+
+See [Phase 2 contacts and compliance](CONTACTS.md) for the audience workspace, imports, consent, unsubscribe, suppressions and export.
 

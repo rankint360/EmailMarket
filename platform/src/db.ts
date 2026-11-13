@@ -14,10 +14,6 @@ export async function openDatabase(url?: string, directory?: string) {
   const local = pool ? undefined : new PGlite(directory);
   return {
     async migrate() {
-      const statement = await readFile(
-        new URL("../../db/001.sql", import.meta.url),
-        "utf8",
-      );
       const migrate = async (
         exec: (s: string) => Promise<unknown>,
         sql: Sql,
@@ -26,13 +22,25 @@ export async function openDatabase(url?: string, directory?: string) {
         await exec(
           "CREATE TABLE IF NOT EXISTS schema_migrations (version integer PRIMARY KEY)",
         );
-        if (
-          !(
-            await sql("SELECT version FROM schema_migrations WHERE version = 1")
-          ).length
-        ) {
+        for (const version of [1, 2]) {
+          if (
+            (
+              await sql(
+                "SELECT version FROM schema_migrations WHERE version=$1",
+                [version],
+              )
+            ).length
+          )
+            continue;
+          const statement = await readFile(
+            new URL(
+              "../../db/" + String(version).padStart(3, "0") + ".sql",
+              import.meta.url,
+            ),
+            "utf8",
+          );
           await exec(statement);
-          await exec("INSERT INTO schema_migrations VALUES (1)");
+          await sql("INSERT INTO schema_migrations VALUES ($1)", [version]);
         }
       };
       if (local) {

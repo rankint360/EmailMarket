@@ -1,3 +1,4 @@
+import { contactsPanel, contactsScript } from "./contacts-ui.js";
 export const page = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Email Market workspace</title><link rel="stylesheet" href="/app.css"><script src="/app.js" defer></script></head>
@@ -12,7 +13,7 @@ export const page = `<!doctype html>
 <section id="management" hidden><h2 id="selected"></h2><h3>Members</h3><ul id="members"></ul>
 <form id="member-form" hidden><label>Existing account email<input name="email" type="email" required></label>
 <label>Role<select name="role"><option>viewer</option><option>marketer</option><option>developer</option><option>admin</option></select></label>
-<button>Save member</button></form><h3>Audit history</h3><ul id="audit"></ul></section></main></body></html>`;
+<button>Save member</button></form><h3>Audit history</h3><ul id="audit"></ul></section>${contactsPanel}</main></body></html>`;
 
 export const assets = {
   css: `
@@ -92,6 +93,7 @@ async function refresh() {
     list.replaceChildren();
     for (const workspace of workspaces) {
       const row = item(list, workspace.name + ' · ' + workspace.role);
+      if (['owner','admin','marketer','viewer'].includes(workspace.role)) action(row, 'Contacts', () => openAudience(workspace));
       if (['owner', 'admin'].includes(workspace.role)) action(row, 'Manage', () => select(workspace));
     }
     if (!workspaces.length) item(list, 'Create your first workspace below.');
@@ -99,7 +101,7 @@ async function refresh() {
     if (error.status !== 401) throw error;
     get('identity').hidden = false;
     get('workspace').hidden = get('management').hidden = get('logout').hidden = true;
-    active = undefined;
+    active = undefined; hideAudience();
   }
 }
 function form(id, handler) {
@@ -131,5 +133,6 @@ form('member-form', async values => {
   await select(workspace);
 });
 get('logout').addEventListener('click', () => perform(async () => { await api('logout', 'POST'); await refresh(); }));
+${contactsScript}
 void perform(refresh);`,
 };
