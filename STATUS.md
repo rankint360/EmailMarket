@@ -37,3 +37,7 @@ Implemented plain-text templates and preview, campaign drafts, list/tag audience
 ## Phase 0 discovery closeout
 
 Reviewed the original Part 24 brief and expanded discovery with the full named competitor roster, public review evidence, personas, MVP acceptance criteria, architecture decisions, design direction, operating gates and a registry-checked brand shortlist. The [Phase 0 index](docs/discovery/README.md) links the package and records evidence that requires external participation or launch access. Existing implementation milestones remain recorded above.
+
+## Phase 5 growth milestone
+
+Implemented hosted forms, form-to-group automation, consent segments, signed outbound event delivery, integration credentials and monthly usage and billing estimates. See [growth API and operations](platform/GROWTH.md).

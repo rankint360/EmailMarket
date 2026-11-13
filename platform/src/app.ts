@@ -1,3 +1,4 @@
+import { registerGrowth } from "./growth.js";
 import { registerMarketing } from "./marketing.js";
 import { registerDelivery } from "./delivery.js";
 import { registerContacts } from "./contacts.js";
@@ -364,5 +365,9 @@ export function buildApp(
   registerContacts(app, db, scope);
   registerDelivery(app, db, scope, options.feedbackKey);
   registerMarketing(app, scope, options.publicOrigin);
+  const unitCents = Number(process.env.BILLING_UNIT_CENTS ?? 0);
+  if (!Number.isSafeInteger(unitCents) || unitCents < 0 || unitCents > 10000)
+    throw new Error("Invalid BILLING_UNIT_CENTS");
+  registerGrowth(app, db, scope, unitCents);
   return app;
 }

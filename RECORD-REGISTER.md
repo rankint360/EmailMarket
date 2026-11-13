@@ -23,3 +23,5 @@ Add one entry for each decision, research finding, build, test run, publication 
 - REC-014 — Phase 4 marketing implementation and campaign integration verification. Live sends depend on Phase 3 operational activation.
 
 - REC-015 — 2026-11-13 Phase 0 discovery closeout. Added public-source comparison of 18 vendors, product definition, technical specification and Verisign .com checks. Customer interviews, vendor trials and provider approvals remain open.
+
+- REC-016 — Phase 5 growth functionality, tests and documentation.
