@@ -1,3 +1,4 @@
+import { registerDelivery } from "./delivery.js";
 import { registerContacts } from "./contacts.js";
 import Fastify from "fastify";
 import type { FastifyRequest } from "fastify";
@@ -29,7 +30,12 @@ function email(input: unknown) {
 
 export function buildApp(
   db: Database,
-  options: { secure?: boolean; logger?: boolean; operatorKey?: string } = {},
+  options: {
+    secure?: boolean;
+    logger?: boolean;
+    operatorKey?: string;
+    feedbackKey?: string;
+  } = {},
 ) {
   const app = Fastify({
     logger: options.logger,
@@ -354,5 +360,6 @@ export function buildApp(
     ),
   );
   registerContacts(app, db, scope);
+  registerDelivery(app, db, scope, options.feedbackKey);
   return app;
 }

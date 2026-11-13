@@ -1,0 +1,12 @@
+# Phase 3 delivery infrastructure
+
+Create a sending domain as an owner or admin using POST /api/v1/workspaces/:id/sending-domains with domain. Publish the returned challenge as TXT at _emailmarket.<domain>, then POST the domain to /sending-domains/verify under the same workspace prefix. Configure aligned DKIM, SPF and DMARC on the delivery host before sending.
+
+Create or revoke credentials with POST /sending-credentials and DELETE /sending-credentials/:credential. POST /api/v1/messages with a bearer credential, Idempotency-Key and JSON sender, recipient, subject and content. An accepted API response represents durable intake. GET /messages and /messages/:message/events show delivery status and history. Use unique idempotency keys per logical send.
+
+Run npm run migrate, then start a worker with node dist/src/worker.js. Set DATABASE_URL and DELIVERY_WORKSPACES to a comma-separated allowlist of approved workspace IDs. Use PROVIDER_URL and PROVIDER_KEY for an HTTPS delivery gateway or POSTFIX_SENDMAIL for the installed Postfix sendmail binary. The HTTPS gateway receives JSON including the stable message ID, stream, envelope, content and headers. It must durably accept before returning success. Postfix acceptance represents local spool acceptance. Provider or Postfix downstream events require a trusted normalizer posting to /internal/v1/delivery-events with FEEDBACK_KEY and workspace, message, event and kind. Supported kinds are delivered, deferred, failed, hard_bounce and complaint. Use stable event IDs. Hard bounces and complaints suppress subsequent sends.
+
+An unknown outcome is held for operator reconciliation. The worker never resubmits an uncertain job. Run separate deployment workers or gateway routes for reputation isolation and enforce host-level quotas, DKIM signing, TLS and private feedback ingress before production activation. Live gateway, DNS, Postfix and mailbox testing require provisioned infrastructure.
+
+
+Postfix authenticated submission can hand each plain-text message to the SMTP bridge via a dedicated per-workspace pipe service and one recipient per invocation. Run node dist/src/smtp-submit.js with the Postfix envelope sender and recipient as arguments. Supply SMTP_BRIDGE_API and the workspace SMTP_BRIDGE_CREDENTIAL via service configuration. Require TLS and SASL on the submission listener, bind each credential to its workspace pipe, and require a stable Message-ID for deduplication. The bridge supports plain-text intake; MIME decoding and a managed SASL directory need deployment integration.

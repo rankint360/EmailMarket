@@ -17,3 +17,5 @@
 | REC-012 | 2026-11-13 | Phase 2 verification | Local checks passed | TypeScript, formatting and three integration tests. Standalone PostgreSQL and container verification run in GitHub Actions. |
 Add one entry for each decision, research finding, build, test run, publication or approval. Capture date, accountable owner, evidence and next action.
 
+
+- REC-013 — Phase 3 delivery implementation and local integration verification. Live delivery activation remains infrastructure-dependent.

@@ -15,6 +15,9 @@ if ((production || migration) && !url)
 const operatorKey = process.env.OPERATOR_KEY;
 if (operatorKey && operatorKey.length < 32)
   throw new Error("OPERATOR_KEY must be at least 32 characters");
+const feedbackKey = process.env.FEEDBACK_KEY;
+if (feedbackKey && feedbackKey.length < 32)
+  throw new Error("FEEDBACK_KEY must be at least 32 characters");
 const db = await openDatabase(url, process.env.LOCAL_DB ?? "./local-data");
 
 try {
@@ -29,7 +32,12 @@ try {
       );
       await db.run((sql) => sql(check));
     }
-    const app = buildApp(db, { secure: production, logger: true, operatorKey });
+    const app = buildApp(db, {
+      secure: production,
+      logger: true,
+      operatorKey,
+      feedbackKey,
+    });
     app.addHook("onClose", () => db.close());
     for (const signal of ["SIGINT", "SIGTERM"] as const) {
       process.once(
