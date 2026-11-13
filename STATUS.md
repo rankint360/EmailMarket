@@ -1,14 +1,14 @@
 # Project status
 
-**Current milestone** — Part 24 discovery package prepared for sponsor review.
+**Milestone** — Part 15 Phase 1 platform foundation.
 **Date** — 2026-11-13.
-**Next phase** — Phase 2 foundation awaits explicit approval.
 
-1. Read the master prompt and extracted the Part 24 deliverables and Part 25 phase gates.
-2. Checked the workspace and repository. No local Git checkout was present. GitHub connector reported a public repository, push access and default branch main.
-3. Reviewed primary vendor, mailbox, regulator and cloud documentation and recorded findings and research gaps.
-4. Drafted the MVP, data model, UX, hybrid delivery architecture, roadmap, risk register and foundation tickets.
-5. Verified all four documents, all 12 discovery sections and local document links. Published the discovery package to GitHub on main.
-6. Pending sponsor review of research depth, MVP boundaries, launch market and critical risks.
+1. Published the Part 24 discovery package and risk register in Phase 0.
+2. Corrected roadmap numbering and took the direction to build Phase 1 as authorization for foundation implementation.
+3. Implemented identity, workspaces, membership roles, tenant-scoped database access and auditable changes.
+4. Connected the workspace UI to the API and added private operator health and metrics.
+5. Added versioned SQL, a deployment image, GitHub verification workflow and setup and operations documentation.
+6. Verified formatting, strict TypeScript compilation and both integration tests locally. Repeated the suite against standalone PostgreSQL 18 with a limited runtime role.
+7. Prepared the Phase 1 commit for publication. Review workflow results on GitHub.
 
-Review [Part 24](PART-24.md), [risk register](RISK-REGISTER.md) and [record register](RECORD-REGISTER.md). Track subsequent milestones here with date, owner, acceptance checks, actual test results, unresolved issues and GitHub commit.
+Production deployment requires a deployment target and operator gateway. Identity and operator rollout limitations are in [the foundation guide](platform/README.md). Phase 2 contacts and compliance awaits authorization. Research and launch risks remain in [the risk register](RISK-REGISTER.md).

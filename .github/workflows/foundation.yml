@@ -1,0 +1,44 @@
+name: Foundation
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+          cache: npm
+          cache-dependency-path: platform/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - name: Verify standalone PostgreSQL
+        env:
+          MIGRATION_DATABASE_URL: postgresql://postgres:postgres-ci-only@127.0.0.1:5432/postgres
+          TEST_DATABASE_URL: postgresql://emailmarket_runtime:runtime-ci-only@127.0.0.1:5432/postgres
+        run: |
+          npm run migrate
+          node --input-type=module -e 'import pg from "pg"; const c = new pg.Client({connectionString: process.env.MIGRATION_DATABASE_URL}); await c.connect(); await c.query("CREATE ROLE emailmarket_runtime LOGIN PASSWORD " + c.escapeLiteral(new URL(process.env.TEST_DATABASE_URL).password)); await c.query("GRANT emailmarket_app TO emailmarket_runtime"); await c.end();'
+          npm test
+      - name: Build release container
+        run: docker build -t emailmarket-foundation:${{ github.sha }} .
+

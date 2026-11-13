@@ -9,6 +9,8 @@
 | REC-005 | 2026-11-13 | MVP and architecture | Proposed | Review modular monolith, separated streams, Postgres outbox, phased activation and ambiguity handling |
 | REC-006 | 2026-11-13 | Risk ownership and gates | Proposed | Review RISK-REGISTER.md and assign accountable people |
 | REC-007 | 2026-11-13 | Brand | Open | Shortlist in PART-24.md; domain and trademark status unresolved |
-| REC-008 | 2026-11-13 | Foundation | Awaiting approval | Review Phase 2 tickets and test/documentation gates |
+| REC-008 | 2026-11-13 | Foundation | Awaiting approval | Review Phase 1 tickets and test/documentation gates |
+| REC-009 | 2026-11-13 | Phase numbering and implementation authorization | Recorded | Part 15 Phase 0 is discovery and Phase 1 is platform foundation. User directed completion of Phase 1. |
+| REC-010 | 2026-11-13 | Foundation build and verification | Implemented | Strict TypeScript, Fastify, PostgreSQL and PGlite, workspace UI, scoped roles, audit, operator health and CI container build. Local and standalone database tests passed. |
 
 Add one entry for each decision, research finding, build, test run, publication or approval. Capture date, accountable owner, evidence and next action.

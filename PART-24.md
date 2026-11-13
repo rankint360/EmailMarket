@@ -78,9 +78,10 @@ Planning ranges are elapsed weeks for a small cross-functional team. Staffing an
 
 | Phase | Owner role | Depends on | Range | Exit evidence and primary risk |
 |---|---|---|---|---|
-| 1 Discovery | Product + architecture | Sponsor input | 1–3 | Approved scope, design and risk responses; weak demand evidence |
-| 2 Foundation | Engineering lead | Phase 1 approval | 2–4 | Reproducible build, isolation tests, CI and setup docs; identity integration |
-| 3 Delivery core | Delivery lead | Phase 2, provider sandbox | 4–7 | REST/SMTP test, authenticated events, failure and duplicate checks; provider limits |
+| 0 Discovery | Product + architecture | Sponsor input | 1–3 | Approved scope, design and risk responses; weak demand evidence |
+| 1 Foundation | Engineering lead | Phase 0 approval | 2–4 | Reproducible build, isolation tests, CI and setup docs; identity integration |
+| 2 Contacts and compliance | Product engineering | Phase 1 | 3–5 | Consent and suppression tests; migration fidelity |
+| 3 Delivery core | Delivery lead | Phases 1–2, provider sandbox | 4–7 | REST/SMTP test, authenticated events, failure and duplicate checks; provider limits |
 | 4 Marketing | Product engineering | Phase 3 | 4–7 | Consent-safe import-to-send and unsubscribe tests; suppression races |
 | 5 Growth and billing | Product engineering | Phase 4 | 3–6 | Ledger reconciliation, entitlement tests and approved P1 workflows; scope growth |
 | 6 Commercial beta | Operations + QA | Phases 3–5, legal/provider approval | 3–6 | Restore drill, load and deliverability results, incident runbook and pilot sign-off; reputation |
@@ -91,10 +92,11 @@ At each phase start, document objective, tickets, dependencies and measurable ac
 ## 11. Risk register
 See [RISK-REGISTER.md](RISK-REGISTER.md). Sponsor review is required for market, provider, rollout and budget assumptions.
 
-## 12. Phase 2 engineering tickets
+## 12. Phase 1 engineering tickets
 1. Repository and CI (1–2 days, engineering). Establish monorepo, locked dependencies, lint/typecheck/test/build and local setup. Verify clean checkout and CI.
 2. Runtime and database (2–4 days, platform, after 1). Add environment validation, local DB, baseline migrations and health endpoints. Test migration, rollback/recovery and invalid config.
 3. Identity and tenant context (3–5 days, backend, after 2). Create workspace, membership, role checks and session handling. Run cross-tenant, revoked-user and pooled-connection tests. Record auth ADR.
 4. Audit and operator boundary (2–4 days, security/backend, after 3). Scope operator privileges and redact audit payloads. Test actor attribution and denied access. Document emergency access.
 5. Workspace shell (2–4 days, frontend, after 3). Connect real workspace data and membership views. Test role visibility, keyboard navigation and responsive layout. Document UI conventions.
-6. Foundation acceptance (1–3 days, QA, after 4–5). Run clean-install, integration, E2E and backup/restore smoke checks. Publish results, limitations and release notes, then push the milestone and await Phase 3 approval.
+6. Foundation acceptance (1–3 days, QA, after 4–5). Run clean-install, integration, E2E and backup/restore smoke checks. Publish results, limitations and release notes, then push the milestone and await Phase 2 approval.
+
