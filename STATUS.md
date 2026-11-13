@@ -45,3 +45,7 @@ Implemented hosted forms, form-to-group automation, consent segments, signed out
 ## Phase 6 beta readiness milestone
 
 Added explicit workspace activation and pause, scoped support intake and operator queue visibility, and concurrent-request smoke coverage. The [beta readiness guide](platform/BETA.md) records open production gates. Live deliverability, independent security audit, staging load, beta cohort and pricing validation remain pending.
+
+## Phase 7 expansion
+
+Status: blocked on evidence of core product stability. See [the expansion plan](platform/EXPANSION.md) for the ten workstreams, dependencies, estimates and acceptance checks. Staging, live deliverability and pilot evidence remain open under Phase 6.

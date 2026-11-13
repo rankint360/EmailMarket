@@ -27,3 +27,5 @@ Add one entry for each decision, research finding, build, test run, publication 
 - REC-016 — Phase 5 growth functionality, tests and documentation.
 
 - REC-017 — Phase 6 beta controls, support and smoke verification. Commercial launch gates remain open.
+
+- REC-018 — Phase 7 gate reviewed. Expansion plan prepared for all ten workstreams. Implementation awaits core stability evidence.
