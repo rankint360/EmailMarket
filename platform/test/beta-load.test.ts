@@ -60,6 +60,7 @@ test("beta support boundaries and 200 concurrent-batch requests", async (t) => {
     ).statusCode,
     200,
   );
+  assert.equal((await app.inject("/health/ready")).statusCode, 200);
   const samples: number[] = [];
   for (let batch = 0; batch < 10; batch++)
     await Promise.all(

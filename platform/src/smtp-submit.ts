@@ -25,7 +25,10 @@ try {
     const subject =
       /^Subject:[ \t]*([^\r\n]+)/im.exec(header)?.[1] ?? "Message";
     const messageId = /^Message-ID:[ \t]*([^\r\n]+)/im.exec(header)?.[1];
-    if (!messageId) throw new Error("Message-ID required");
+    if (!messageId) {
+      process.exitCode = 65;
+      throw new Error("Message-ID required");
+    }
     const key = createHash("sha256")
       .update(JSON.stringify([sender, recipient, messageId]))
       .digest("hex");
@@ -40,8 +43,10 @@ try {
       body: JSON.stringify({ sender, recipient, subject, content }),
       signal: AbortSignal.timeout(10000),
     });
-    if (!response.ok) process.exitCode = response.status >= 500 ? 75 : 65;
+    if (!response.ok)
+      process.exitCode =
+        response.status >= 500 || response.status === 429 ? 75 : 65;
   }
 } catch {
-  process.exitCode = 75;
+  process.exitCode ??= 75;
 }

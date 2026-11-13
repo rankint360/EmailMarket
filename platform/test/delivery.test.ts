@@ -78,6 +78,58 @@ test("transactional intake, idempotency, dispatch and complaint suppression", as
   assert.equal(accepted.statusCode, 202, accepted.body);
   assert.equal((await send("first")).json().id, accepted.json().id);
   assert.equal((await send("first", "Different")).statusCode, 409);
+  const revoked = await send("revoked");
+  assert.equal(revoked.statusCode, 202);
+  await db.run(
+    (sql) =>
+      sql("UPDATE sending_domains SET verified_at=NULL WHERE workspace_id=$1", [
+        w,
+      ]),
+    "",
+    w,
+  );
+  await db.run(
+    (sql) =>
+      sql(
+        "UPDATE delivery_outbox SET available_at=now()+interval '1 day' WHERE workspace_id=$1 AND message_id=$2",
+        [w, accepted.json().id],
+      ),
+    "",
+    w,
+  );
+  assert.equal(
+    await dispatchOne(db, w, async () =>
+      assert.fail("Unverified sender submitted"),
+    ),
+    false,
+  );
+  await assert.rejects(
+    db.run(
+      (sql) =>
+        recordEvent(sql, w, revoked.json().id, "false-event", "delivered"),
+      "",
+      w,
+    ),
+    /has not been submitted/,
+  );
+  await db.run(
+    (sql) =>
+      sql(
+        "UPDATE sending_domains SET verified_at=now() WHERE workspace_id=$1",
+        [w],
+      ),
+    "",
+    w,
+  );
+  await db.run(
+    (sql) =>
+      sql(
+        "UPDATE delivery_outbox SET available_at=now() WHERE workspace_id=$1",
+        [w],
+      ),
+    "",
+    w,
+  );
   let calls = 0;
   assert.equal(
     await dispatchOne(db, w, async () => {
@@ -106,9 +158,9 @@ test("transactional intake, idempotency, dispatch and complaint suppression", as
   );
   assert.equal((await send("second")).statusCode, 409);
   assert.equal(
-    (
-      await app.inject({ url: root + "/messages", headers: { cookie } })
-    ).json()[0].status,
+    (await app.inject({ url: root + "/messages", headers: { cookie } }))
+      .json()
+      .find((row: { id: string }) => row.id === accepted.json().id).status,
     "complaint",
   );
 });

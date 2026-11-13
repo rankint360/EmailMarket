@@ -1,6 +1,6 @@
 # Project status
 
-**Milestone** — Part 15 Phase 4 marketing product.
+**Milestone** — Phase 0–6 audit and fixes.
 **Date** — 2026-11-13.
 
 1. Published the Part 24 discovery package and risk register in Phase 0.
@@ -32,7 +32,7 @@ Implemented tenant-scoped transactional intake, DNS ownership challenges, revoca
 
 ## Phase 4 marketing milestone
 
-Implemented plain-text templates and preview, campaign drafts, list/tag audiences, eligibility validation, scheduling, cancellation and delivery analytics. Scheduled messages use the delivery outbox and retain a snapshot of content and recipients. Dispatch checks eligibility again. See [marketing setup and tests](platform/MARKETING.md). Phase 5 growth features await authorization.
+Implemented plain-text templates and preview, campaign drafts, list/tag audiences, eligibility validation, scheduling, cancellation and delivery analytics. Scheduled messages use the delivery outbox and retain a snapshot of content and recipients. Dispatch checks eligibility again. See [marketing setup and tests](platform/MARKETING.md). Phase 5 followed this milestone.
 
 ## Phase 0 discovery closeout
 
@@ -49,3 +49,8 @@ Added explicit workspace activation and pause, scoped support intake and operato
 ## Phase 7 expansion
 
 Status: blocked on evidence of core product stability. See [the expansion plan](platform/EXPANSION.md) for the ten workstreams, dependencies, estimates and acceptance checks. Staging, live deliverability and pilot evidence remain open under Phase 6.
+
+
+## Phase 0–6 repository audit
+
+Fixed dispatch verification, feedback state checks, SMTP retry handling and schema readiness. Formatting, strict TypeScript compilation and all seven local integration tests passed. See [audit findings](platform/AUDIT.md).

@@ -176,10 +176,23 @@ export function buildApp(
   app.get("/app.js", async (_, reply) =>
     reply.type("text/javascript").send(assets.js),
   );
+  async function checkReadiness() {
+    await db.run(async (sql) => {
+      for (const table of [
+        "contact_preferences",
+        "delivery_outbox",
+        "campaigns",
+        "growth_events",
+        "beta_controls",
+      ]) {
+        await sql("SELECT 1 FROM " + table + " LIMIT 0");
+      }
+    });
+  }
   app.get("/health/live", async () => ({ status: "ok" }));
   app.get("/health/ready", async (_, reply) => {
     try {
-      await db.run((sql) => sql("SELECT 1 FROM contact_preferences LIMIT 1"));
+      await checkReadiness();
     } catch {
       return reply.code(503).send({ status: "unavailable" });
     }
@@ -213,7 +226,7 @@ export function buildApp(
   app.get("/internal/v1/status", async (req) => {
     operator(req);
     req.log.info({ operation: "operator_status" }, "operator access");
-    await db.run((sql) => sql("SELECT 1 FROM contact_preferences LIMIT 1"));
+    await checkReadiness();
     return { database: "ready", uptimeSeconds: Math.floor(process.uptime()) };
   });
 

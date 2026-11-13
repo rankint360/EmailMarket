@@ -170,7 +170,11 @@ export async function recordEvent(
     [w, id],
   );
   if (!message) throw fail(404, "Message unavailable");
-  if (message.status === "queued" || message.status === "suppressed")
+  if (
+    ["queued", "suppressed", "cancelled", "sender_unverified"].includes(
+      message.status,
+    )
+  )
     throw fail(409, "Message has not been submitted");
   const added = await sql(
     "INSERT INTO delivery_events(workspace_id,message_id,event_key,kind) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING RETURNING event_key",
@@ -217,10 +221,24 @@ export async function dispatchOne(db: Database, w: string, adapter: Adapter) {
         [w],
       );
       if (!row) return;
-      if (!(await eligible(sql, w, row.recipient, row.stream))) {
+      const domain = row.sender.split("@")[1];
+      const senderVerified =
+        (
+          await sql(
+            "SELECT domain FROM sending_domains WHERE workspace_id=$1 AND domain=$2 AND verified_at IS NOT NULL FOR SHARE",
+            [w, domain],
+          )
+        ).length > 0;
+      await sql("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [
+        w + ":" + row.recipient,
+      ]);
+      if (
+        !senderVerified ||
+        !(await eligible(sql, w, row.recipient, row.stream))
+      ) {
         await sql(
-          "UPDATE messages SET status='suppressed' WHERE workspace_id=$1 AND id=$2",
-          [w, row.id],
+          "UPDATE messages SET status=$3 WHERE workspace_id=$1 AND id=$2",
+          [w, row.id, senderVerified ? "suppressed" : "sender_unverified"],
         );
         await sql(
           "DELETE FROM delivery_outbox WHERE workspace_id=$1 AND message_id=$2",
