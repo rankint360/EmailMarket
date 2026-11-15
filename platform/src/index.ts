@@ -41,6 +41,8 @@ try {
       secure: production,
       logger: true,
       operatorKey,
+      adminName: process.env.ADMIN_NAME,
+      adminKey: process.env.ADMIN_KEY,
       feedbackKey,
       publicOrigin,
     });

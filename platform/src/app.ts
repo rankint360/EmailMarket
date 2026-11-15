@@ -1,3 +1,4 @@
+import { registerAdmin } from "./admin.js";
 import { registerBeta } from "./beta.js";
 import { registerGrowth } from "./growth.js";
 import { registerMarketing } from "./marketing.js";
@@ -39,6 +40,8 @@ export function buildApp(
     operatorKey?: string;
     feedbackKey?: string;
     publicOrigin?: string;
+    adminName?: string;
+    adminKey?: string;
   } = {},
 ) {
   const app = Fastify({
@@ -78,7 +81,7 @@ export function buildApp(
     if (!value) throw fail(401, "Sign in required");
     const [row] = await db.run((sql) =>
       sql<{ account_id: string }>(
-        "SELECT account_id FROM sessions WHERE token_hash=$1 AND expires_at>now()",
+        "SELECT s.account_id FROM sessions s JOIN accounts a ON a.id=s.account_id WHERE s.token_hash=$1 AND s.expires_at>now() AND NOT a.disabled",
         [digest(value)],
       ),
     );
@@ -184,6 +187,7 @@ export function buildApp(
         "campaigns",
         "growth_events",
         "beta_controls",
+        "operator_audit",
       ]) {
         await sql("SELECT 1 FROM " + table + " LIMIT 0");
       }
@@ -237,7 +241,7 @@ export function buildApp(
     const passwordHash = await hashPassword(password);
     const created = await db.run((sql) =>
       sql(
-        "INSERT INTO accounts VALUES ($1,$2,$3) ON CONFLICT (email) DO NOTHING RETURNING id",
+        "INSERT INTO accounts(id,email,password_hash) VALUES ($1,$2,$3) ON CONFLICT (email) DO NOTHING RETURNING id",
         [randomUUID(), address, passwordHash],
       ),
     );
@@ -250,7 +254,7 @@ export function buildApp(
     const password = field(req.body, "password", 12, 128);
     const [account] = await db.run((sql) =>
       sql<{ id: string; password_hash: string }>(
-        "SELECT id,password_hash FROM accounts WHERE email=$1",
+        "SELECT id,password_hash FROM accounts WHERE email=$1 AND NOT disabled",
         [address],
       ),
     );
@@ -384,5 +388,6 @@ export function buildApp(
     throw new Error("Invalid BILLING_UNIT_CENTS");
   registerGrowth(app, db, scope, unitCents);
   registerBeta(app, db, scope, options.operatorKey);
+  registerAdmin(app, db, options.adminName, options.adminKey);
   return app;
 }

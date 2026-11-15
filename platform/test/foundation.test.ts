@@ -137,7 +137,7 @@ test("file-backed migration survives reopen", async () => {
       await first.migrate();
       await first.run((sql) =>
         sql(
-          "INSERT INTO accounts VALUES (gen_random_uuid(),'persist@example.test','test-fixture')",
+          "INSERT INTO accounts(id,email,password_hash) VALUES (gen_random_uuid(),'persist@example.test','test-fixture')",
         ),
       );
     } finally {

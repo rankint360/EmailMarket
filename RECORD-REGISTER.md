@@ -31,3 +31,5 @@ Add one entry for each decision, research finding, build, test run, publication 
 - REC-018 — Phase 7 gate reviewed. Expansion plan prepared for all ten workstreams. Implementation awaits core stability evidence.
 
 - REC-019 — Phase 0–6 repository audit, fixes and seven passing local integration tests.
+
+- REC-020 — Internal administration made a prerequisite for expansion. Added operator dashboard, tenant controls and audit.

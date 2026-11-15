@@ -54,3 +54,7 @@ Status: blocked on evidence of core product stability. See [the expansion plan](
 ## Phase 0–6 repository audit
 
 Fixed dispatch verification, feedback state checks, SMTP retry handling and schema readiness. Formatting, strict TypeScript compilation and all seven local integration tests passed. See [audit findings](platform/AUDIT.md).
+
+## Required administration milestone
+
+The [internal admin dashboard](platform/ADMIN.md) is a prerequisite for expansion. Migration 007 adds account suspension and operator audit. The dashboard covers workspace sending approval and pause, billing overrides, integration/API credential revocation and operational status. Deployment requires a private TLS gateway and separately configured credentials.
