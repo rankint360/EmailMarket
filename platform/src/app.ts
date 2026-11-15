@@ -42,6 +42,8 @@ export function buildApp(
     publicOrigin?: string;
     adminName?: string;
     adminKey?: string;
+    adminHost?: string;
+    adminGatewayKey?: string;
   } = {},
 ) {
   const app = Fastify({
@@ -388,6 +390,38 @@ export function buildApp(
     throw new Error("Invalid BILLING_UNIT_CENTS");
   registerGrowth(app, db, scope, unitCents);
   registerBeta(app, db, scope, options.operatorKey);
-  registerAdmin(app, db, options.adminName, options.adminKey);
+  if (options.adminHost) {
+    if (
+      !options.adminName?.trim() ||
+      !options.adminKey ||
+      options.adminKey.length < 32 ||
+      !options.adminGatewayKey ||
+      options.adminGatewayKey.length < 32 ||
+      options.adminGatewayKey === options.adminKey
+    )
+      throw new Error(
+        "Owner dashboard requires ADMIN_NAME and distinct ADMIN_KEY and ADMIN_GATEWAY_KEY secrets",
+      );
+    app.addHook("onRequest", async (req) => {
+      const route = req.routeOptions.url ?? "";
+      const allowed =
+        route === "/admin" ||
+        route === "/admin.js" ||
+        route === "/app.css" ||
+        route === "/health/live" ||
+        route === "/health/ready" ||
+        route.startsWith("/internal/admin/v1/");
+      if (
+        req.headers.host?.toLowerCase() !== options.adminHost ||
+        !allowed ||
+        !equal(
+          String(req.headers["x-owner-gateway-key"] ?? ""),
+          options.adminGatewayKey!,
+        )
+      )
+        throw fail(404, "Resource unavailable");
+    });
+    registerAdmin(app, db, options.adminName, options.adminKey);
+  }
   return app;
 }

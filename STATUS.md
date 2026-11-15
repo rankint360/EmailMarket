@@ -58,3 +58,5 @@ Fixed dispatch verification, feedback state checks, SMTP retry handling and sche
 ## Required administration milestone
 
 The [internal admin dashboard](platform/ADMIN.md) is a prerequisite for expansion. Migration 007 adds account suspension and operator audit. The dashboard covers workspace sending approval and pause, billing overrides, integration/API credential revocation and operational status. Deployment requires a private TLS gateway and separately configured credentials.
+
+Owner dashboard isolation added. Deploy a separate owner-only instance behind an MFA gateway. DNS and gateway provisioning remain pending.

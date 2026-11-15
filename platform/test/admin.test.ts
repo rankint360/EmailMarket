@@ -8,16 +8,50 @@ test("operator approval, billing and account suspension are scoped and audited",
   const db = await openDatabase(process.env.TEST_DATABASE_URL);
   if (!process.env.TEST_DATABASE_URL) await db.migrate();
   const adminKey = "test-only-dashboard-key-over-32-characters";
-  const app = buildApp(db, { adminKey, adminName: "operator-test" });
+  const app = buildApp(db);
+  const gateway = "test-only-gateway-key-over-32-characters";
+  const host = "admin.example.test";
+  const owner = buildApp(db, {
+    adminKey,
+    adminName: "operator-test",
+    adminHost: host,
+    adminGatewayKey: gateway,
+  });
   t.after(async () => {
     await app.close();
+    await owner.close();
     await db.close();
   });
-  const headers = { authorization: "Bearer " + adminKey };
+  const proxy = { host, "x-owner-gateway-key": gateway };
+  const headers = { ...proxy, authorization: "Bearer " + adminKey };
   const root = "/internal/admin/v1";
   assert.doesNotThrow(() => new Function(script));
-  assert.equal((await app.inject("/admin")).statusCode, 200);
-  assert.equal((await app.inject(root + "/users")).statusCode, 401);
+  assert.equal((await app.inject({ url: "/admin", headers })).statusCode, 404);
+  assert.equal(
+    (await owner.inject({ url: "/admin", headers: proxy })).statusCode,
+    200,
+  );
+  assert.equal(
+    (
+      await owner.inject({
+        url: "/admin",
+        headers: { host: "customer.example.test", "x-forwarded-host": host },
+      })
+    ).statusCode,
+    404,
+  );
+  assert.equal(
+    (await owner.inject({ url: "/api/v1/workspaces", headers })).statusCode,
+    404,
+  );
+  assert.equal(
+    (await owner.inject({ url: root + "/users", headers: proxy })).statusCode,
+    401,
+  );
+  assert.equal(
+    (await owner.inject({ url: "/admin", headers: { host } })).statusCode,
+    404,
+  );
   const credentials = {
     email: "admin-dashboard@example.test",
     password: "a long integration test password",
@@ -45,18 +79,19 @@ test("operator approval, billing and account suspension are scoped and audited",
     payload: { name: "Admin test workspace" },
   });
   const w = created.json().id;
-  const users = (await app.inject({ url: root + "/users", headers })).json();
+  const users = (await owner.inject({ url: root + "/users", headers })).json();
   const user = users.find(
     (x: { email: string }) => x.email === credentials.email,
   );
   assert.ok(user);
   const workspace = root + "/workspaces/" + w;
   assert.equal(
-    (await app.inject({ url: workspace, headers: customer })).statusCode,
+    (await owner.inject({ url: workspace, headers: { ...customer, ...proxy } }))
+      .statusCode,
     401,
   );
   const update = (url: string, payload: object) =>
-    app.inject({
+    owner.inject({
       method: "PUT",
       url,
       headers,
@@ -65,7 +100,7 @@ test("operator approval, billing and account suspension are scoped and audited",
   const approval = await update(workspace + "/sending", { paused: false });
   assert.equal(approval.statusCode, 200, approval.body);
   assert.equal(
-    (await app.inject({ url: workspace, headers })).json().activation.paused,
+    (await owner.inject({ url: workspace, headers })).json().activation.paused,
     false,
   );
   const bill = await update(workspace + "/billing", {
@@ -92,7 +127,7 @@ test("operator approval, billing and account suspension are scoped and audited",
       .statusCode,
     401,
   );
-  const audit = (await app.inject({ url: root + "/audit", headers })).json();
+  const audit = (await owner.inject({ url: root + "/audit", headers })).json();
   assert.ok(
     audit.some(
       (row: { action: string; target: string }) =>

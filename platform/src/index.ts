@@ -12,6 +12,14 @@ const url = migration
   : process.env.DATABASE_URL;
 if ((production || migration) && !url)
   throw new Error("DATABASE_URL is required");
+const adminHost = process.env.ADMIN_HOST?.trim().toLowerCase();
+if (
+  adminHost &&
+  !/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(
+    adminHost,
+  )
+)
+  throw new Error("ADMIN_HOST must be a hostname without scheme or port");
 const operatorKey = process.env.OPERATOR_KEY;
 if (operatorKey && operatorKey.length < 32)
   throw new Error("OPERATOR_KEY must be at least 32 characters");
@@ -43,6 +51,8 @@ try {
       operatorKey,
       adminName: process.env.ADMIN_NAME,
       adminKey: process.env.ADMIN_KEY,
+      adminHost,
+      adminGatewayKey: process.env.ADMIN_GATEWAY_KEY,
       feedbackKey,
       publicOrigin,
     });
